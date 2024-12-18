@@ -1,13 +1,13 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Router } from "@angular/router";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { HeaderMenus } from 'src/app/Models/header-menus.dto';
 import { LocalStorageService } from 'src/app/Services/local-storage.service';
-import { HeaderMenusService } from "src/app/Services/header-menus.service";
-import { HeaderComponent } from "./header.component";
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from "@angular/core";
+import { HeaderMenusService } from 'src/app/Services/header-menus.service';
+import { HeaderComponent } from './header.component';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
-
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let router: Router;
@@ -79,5 +79,55 @@ describe('HeaderComponent', () => {
   it('HEADER COMPONENT should navigate to profile', () => {
     component.navigationTo('profile');
     expect(spy).toHaveBeenCalledWith('profile');
+  });
+
+  // Test 9: Verifica que los puntos de menú correctos existen cuándo estamos autenticados
+  it('should display correct menu items when AUTHENTICATED', () => {
+    component.showAuthSection = true;
+    component.showNoAuthSection = false;
+    fixture.detectChanges();
+
+    const homeButton = fixture.debugElement.query(
+      By.css('button:nth-child(2)')
+    ).nativeElement;
+    const adminPostsButton = fixture.debugElement.query(
+      By.css('button:nth-child(3)')
+    ).nativeElement;
+    const adminCategoriesButton = fixture.debugElement.query(
+      By.css('button:nth-child(4)')
+    ).nativeElement;
+    const profileButton = fixture.debugElement.query(
+      By.css('button:nth-child(5)')
+    ).nativeElement;
+    const logoutButton = fixture.debugElement.query(
+      By.css('button:nth-child(6)')
+    ).nativeElement;
+
+    expect(homeButton.textContent).toContain('Home');
+    expect(adminPostsButton.textContent).toContain('Admin posts');
+    expect(adminCategoriesButton.textContent).toContain('Admin categories');
+    expect(profileButton.textContent).toContain('Profile');
+    expect(logoutButton.textContent).toContain('Logout');
+  });
+
+  // Test 10: Verifica que los puntos de menú correctos existen cuándo no estamos autenticados
+  it('should display correct menu items when NOT AUTHENTICATED', () => {
+    component.showAuthSection = false;
+    component.showNoAuthSection = true;
+    fixture.detectChanges();
+
+    const homeButton = fixture.debugElement.query(
+      By.css('button:nth-child(2)')
+    ).nativeElement;
+    const loginButton = fixture.debugElement.query(
+      By.css('button:nth-child(3)')
+    ).nativeElement;
+    const registerButton = fixture.debugElement.query(
+      By.css('button:nth-child(4)')
+    ).nativeElement;
+
+    expect(homeButton.textContent).toContain('Home');
+    expect(loginButton.textContent).toContain('Login');
+    expect(registerButton.textContent).toContain('Register');
   });
 });
